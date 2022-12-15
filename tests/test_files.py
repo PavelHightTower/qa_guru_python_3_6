@@ -1,10 +1,21 @@
 import zipfile
-import os
 from pathlib import Path
 import csv
 import io
 from PyPDF2 import PdfReader
 from openpyxl import load_workbook
+from zipfile import ZipFile
+import os
+from os.path import basename
+
+
+def zip_file(new_dir_name: str, zip_file_name: str, dir_with_files_to_zip: str):
+    os.mkdir(new_dir_name)
+    with ZipFile(f'{new_dir_name}/{zip_file_name}', 'w') as z:
+        for folderName, subfiles, filenames in os.walk(f'{dir_with_files_to_zip}'):
+            for filename in filenames:
+                filePath = os.path.join(folderName, filename)
+                z.write(filePath, basename(filePath))
 
 
 def file_data_from_zip_to_list(file_dir: str, zip_file_name: str, file_name: str):
@@ -16,7 +27,7 @@ def file_data_from_zip_to_list(file_dir: str, zip_file_name: str, file_name: str
         with zipfile.ZipFile(file_path) as zipf:
             with zipf.open(f'{file_name}', 'r') as f:
                 reader = csv.reader(
-                    io.TextIOWrapper(f, newline='')
+                    io.TextIOWrapper(f, newline='', encoding='utf-8')
                 )
                 for row in reader:
                     for item in row:
@@ -41,6 +52,9 @@ def file_data_from_zip_to_list(file_dir: str, zip_file_name: str, file_name: str
         return file_text_in_list
     else:
         return print('sorry we not supported yor file format yet')
+
+
+zip_file('../resources', 'test.zip', '../files')
 
 
 def test_my_csv():
