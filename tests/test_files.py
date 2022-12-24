@@ -1,3 +1,4 @@
+import shutil
 import zipfile
 from pathlib import Path
 import csv
@@ -10,6 +11,8 @@ from os.path import basename
 
 
 def zip_file(new_dir_name: str, zip_file_name: str, dir_with_files_to_zip: str):
+    if os.path.isdir(new_dir_name) is True:
+        shutil.rmtree(new_dir_name)
     os.mkdir(new_dir_name)
     with ZipFile(f'{new_dir_name}/{zip_file_name}', 'w') as z:
         for folderName, subfiles, filenames in os.walk(f'{dir_with_files_to_zip}'):
